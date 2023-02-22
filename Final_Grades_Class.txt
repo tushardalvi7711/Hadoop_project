@@ -1,0 +1,196 @@
+package hadoopproject;
+
+public class FinalGrades {
+	private double ES_1_1;
+	private double ES_1_2;
+	private double ES_2_1;
+	private double ES_2_2;
+	private double ES_3_1;
+	private double ES_3_2;
+	private double ES_3_3;
+	private double ES_3_4;
+	private double ES_3_5;
+	private double ES_4_1;
+	private double ES_4_2;
+	private double ES_5_1;
+	private double ES_5_2;
+	private double ES_5_3;
+	private double ES_6_1;
+	private double ES_6_2;
+	private double total;
+
+
+	public FinalGrades (double ES_1_1 , double ES_1_2,
+	double ES_2_1,double ES_2_2,double ES_3_1,double ES_3_2,double ES_3_3,double ES_3_4,double ES_3_5,
+	double ES_4_1,double ES_4_2,double ES_5_1,double ES_5_2,double ES_5_3,double ES_6_1,double ES_6_2,double total) {
+
+		this.ES_1_1 = ES_1_1;
+		this.ES_1_2 = ES_1_2;
+		this.ES_2_1	= ES_2_1;
+		this.ES_2_2 = ES_2_2;
+		this.ES_3_1 = ES_3_1;
+		this.ES_3_2 = ES_3_2;
+		this.ES_3_3 = ES_3_3;
+		this.ES_3_4 = ES_3_4;
+		this.ES_3_5 = ES_3_5;
+		this.ES_4_1 = ES_4_1;
+		this.ES_4_2 = ES_4_2;
+		this.ES_5_1 = ES_5_1;
+		this.ES_5_2 = ES_5_2;
+		this.ES_5_3 = ES_5_3;
+		this.ES_6_1 = ES_6_1;
+		this.ES_6_2 = ES_6_2;
+		this.total = total;
+		
+	}
+
+	public double getTotal() {
+		return total;
+	}
+
+	@Override
+	public String toString() {
+		return "[" + ES_1_1 +" "+ ES_1_2 +" " + ES_2_1 +" " + ES_2_2+" " + ES_3_1+
+				  ES_3_2 +" " + ES_3_3 +" "+ ES_3_4 +" "+ ES_3_5 +" "+ES_4_1+" "+ ES_4_2 +" "+ ES_5_1 +" " 
+				+ ES_5_2+ " " + ES_5_3+" " + ES_6_1 +" " + ES_6_2 +" " + total + " "+ "]";
+	}
+
+	public void setTotal(double total) {
+		this.total = total;
+	}
+
+	public FinalGrades() {
+	}
+
+	public double getES_1_1() {
+		return ES_1_1;
+	}
+
+	public void setES_1_1(double eS_1_1) {
+		ES_1_1 = eS_1_1;
+	}
+
+	public double getES_1_2() {
+		return ES_1_2;
+	}
+
+	public void setES_1_2(double eS_1_2) {
+		ES_1_2 = eS_1_2;
+	}
+
+
+	public double getES_2_1() {
+		return ES_2_1;
+	}
+
+	public void setES_2_1(double eS_2_1) {
+		ES_2_1 = eS_2_1;
+	}
+
+	public double getES_2_2() {
+		return ES_2_2;
+	}
+
+	public  void setES_2_2(double eS_2_2) {
+		ES_2_2 = eS_2_2;
+	}
+
+	public double getES_3_1() {
+		return ES_3_1;
+	}
+
+	public void setES_3_1(double eS_3_1) {
+		ES_3_1 = eS_3_1;
+	}
+
+	public double getES_3_2() {
+		return ES_3_2;
+	}
+
+	public void setES_3_2(double eS_3_2) {
+		ES_3_2 = eS_3_2;
+	}
+
+	public double getES_3_3() {
+		return ES_3_3;
+	}
+
+	public void setES_3_3(double eS_3_3) {
+		ES_3_3 = eS_3_3;
+	}
+
+	public double getES_3_4() {
+		return ES_3_4;
+	}
+
+	public void setES_3_4(double eS_3_4) {
+		ES_3_4 = eS_3_4;
+	}
+
+	public double getES_3_5() {
+		return ES_3_5;
+	}
+
+	public void setES_3_5(double eS_3_5) {
+		ES_3_5 = eS_3_5;
+	}
+
+	public double getES_4_1() {
+		return ES_4_1;
+	}
+
+	public void setES_4_1(double eS_4_1) {
+		ES_4_1 = eS_4_1;
+	}
+
+	public double getES_4_2() {
+		return ES_4_2;
+	}
+
+	public void setES_4_2(double eS_4_2) {
+		ES_4_2 = eS_4_2;
+	}
+
+	public double getES_5_1() {
+		return ES_5_1;
+	}
+
+	public void setES_5_1(double eS_5_1) {
+		ES_5_1 = eS_5_1;
+	}
+
+	public double getES_5_2() {
+		return ES_5_2;
+	}
+
+	public void setES_5_2(double eS_5_2) {
+		ES_5_2 = eS_5_2;
+	}
+
+	public double getES_5_3() {
+		return ES_5_3;
+	}
+
+	public void setES_5_3(double eS_5_3) {
+		ES_5_3 = eS_5_3;
+	}
+
+
+	public double getES_6_1() {
+		return ES_6_1;
+	}
+
+	public void setES_6_1(double eS_6_1) {
+		ES_6_1 = eS_6_1;
+	}
+
+	public double getES_6_2() {
+		return ES_6_2;
+	}
+
+	public void setES_6_2(double eS_6_2) {
+		ES_6_2 = eS_6_2;
+	}
+
+	
+	}
