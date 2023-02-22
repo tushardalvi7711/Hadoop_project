@@ -1,0 +1,59 @@
+package hadoopproject;
+
+import java.util.ArrayList;
+
+public class Student {
+	private  int student_id;
+	private ArrayList<Sessions> session ;
+	private ArrayList<IntermediateGrades>intermediategrades;
+	private ArrayList<FinalGrades> finalgrades;
+	
+	public Student(int student_id,ArrayList<Sessions> session, ArrayList<IntermediateGrades>intermediategrades,
+			ArrayList<FinalGrades> finalgrades ) {
+		this.student_id= student_id;
+		this.session = session;
+		this.intermediategrades = intermediategrades;
+		this.finalgrades = finalgrades;
+		}
+
+	public int getStudent_id() {
+		return student_id;
+	}
+
+	public void setStudent_id(int student_id) {
+		this.student_id = student_id;
+	}
+
+	public ArrayList<Sessions> getSession() {
+		return session;
+	}
+
+	public void setSession(ArrayList<Sessions> session) {
+		this.session = session;
+	}
+
+	public ArrayList<IntermediateGrades> getIntermediategrades() {
+		return intermediategrades;
+	}
+
+	public void setIntermediategrades(ArrayList<IntermediateGrades> intermediategrades) {
+		this.intermediategrades = intermediategrades;
+	}
+
+	public ArrayList<FinalGrades> getFinalgrades() {
+		return finalgrades;
+	}
+
+	public void setFinalgrades(ArrayList<FinalGrades> finalgrades) {
+		this.finalgrades = finalgrades;
+	}
+
+	@Override
+	public String toString() {
+		return "[" + student_id +  " " + session + " " + intermediategrades +" "+
+	finalgrades + " " + "]";
+	}
+	
+	
+
+}
