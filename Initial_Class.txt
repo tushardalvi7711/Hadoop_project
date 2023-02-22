@@ -1,0 +1,267 @@
+package hadoopproject;
+
+import static org.apache.spark.sql.functions.col;
+import static org.apache.spark.sql.functions.row_number;
+import static org.apache.spark.sql.functions.*;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.hbase.HBaseConfiguration;
+import org.apache.hadoop.hbase.HColumnDescriptor;
+import org.apache.hadoop.hbase.HTableDescriptor;
+import org.apache.hadoop.hbase.TableName;
+import org.apache.hadoop.hbase.client.Admin;
+import org.apache.hadoop.hbase.client.Connection;
+import org.apache.hadoop.hbase.client.ConnectionFactory;
+import org.apache.hadoop.hbase.client.Put;
+import org.apache.hadoop.hbase.client.Table;
+import org.apache.hadoop.hbase.util.Bytes;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
+import org.apache.spark.api.java.JavaRDD;
+import org.apache.spark.sql.Dataset;
+import org.apache.spark.sql.Row;
+import org.apache.spark.sql.SparkSession;
+import org.apache.spark.sql.functions;
+import org.apache.spark.sql.catalyst.expressions.GenericRowWithSchema;
+import org.apache.spark.sql.expressions.Window;
+import org.apache.spark.sql.expressions.WindowSpec;
+import org.apache.spark.sql.types.DataTypes;
+
+
+import scala.collection.Iterator;
+import scala.collection.mutable.WrappedArray.ofRef;
+
+public class InitialClass {
+
+	@SuppressWarnings("resource")
+		public static void main(String[] args) throws IOException{
+		
+			Logger.getLogger("org.apache").setLevel(Level.WARN);
+			SparkSession spark =SparkSession.builder().appName("testingsql")
+					.getOrCreate();
+			//SparkSession spark =SparkSession.builder().appName("testingsql").master("local[*]")
+					//.config("spark.sql.warehouse.dir","file:///c:/temp/")
+					//.getOrCreate();
+				
+		
+		Dataset<Row> df = spark.read().option("header",false).option("inferSchema", true).csv("/user/bigdata/saurabh/Processes/*/*");
+//		Dataset<Row> df = spark.read().option("header",false).option("inferSchema", "true").csv("bin/resources/Processes/*/*");
+			
+		 df =df.toDF("session","student_Id","exercise","activity","start_time","end_time","idle_time","mouse_wheel",
+		             "mouse_wheel_click","mouse_click_left","mouse_click_right","mouse_movement","keystroke");
+		
+		// df = df.select("student_Id");
+		 df = df.groupBy("student_Id").agg(functions.collect_list(struct(col("*"))).alias("Sessiondata"));
+		// df.show(229798);
+	
+		//System.out.println(df.count());
+
+		 //3. Assign a unique key to each record and call  the corresponding column as ‘record_id’
+		 WindowSpec window = Window.orderBy("student_Id");
+		 Dataset<Row> newdf = df.withColumn("record_id", row_number().over(window));
+		 //newdf.show(229798);
+		 
+		// spark.sql("create database processes_t");
+		 //spark.sql("use processes_t");
+		// newdf.write().saveAsTable("processes_source2");
+		
+      //		 newdf.createTempView("originaldata");
+		 
+		 
+		 //converting the dataframe in proper date and time format
+		Dataset<Row> errorLogRecords1 = newdf.select(col("record_id"),lit("start_time").alias("Column_name"),col("start_time").alias("value"))
+											.where(to_timestamp(col("start_time"),"dd.MM.yyyy HH:mm:ss").isNull()
+											.or(not(col("start_time").rlike("\\d{2}.\\d{2}.\\d{4}.\\d{2}.\\d{2}.\\d{2}"))) );
+		 
+		Dataset<Row> errorLogRecords2 = newdf.select(col("record_id"),lit("end_time").alias("Column_name"),col("end_time").alias("value"))
+				.where(to_timestamp(col("end_time"),"dd.MM.yyyy HH:mm:ss").isNull()
+				.or(not(col("start_time").rlike("\\d{2}.\\d{2}.\\d{4}.\\d{2}.\\d{2}.\\d{2}"))) );
+		
+		Dataset<Row> errorLogRecords = errorLogRecords1.union(errorLogRecords2);
+		//errorLogRecords.write().saveAsTable("error_Log_Records");
+		
+		
+		//5. Similarly read the data from files final_grades.xlsx and intermediate_grades.xlsx in Spark. 
+		 
+		 Dataset<Row> final_grades1 = spark.read().format("com.databricks.spark.csv").option("inferSchema",true).option("useHeader", true).load("/user/bigdata/saurabh/Data/final_grades1.csv");
+		 //spark.read().format("com.crealytics.spark.excel").option("inferSchema", "true").option("useHeader", "true").load("/user/bigdata/saurabh/Data/final_grades1.csv");
+		 final_grades1 = final_grades1.toDF("Final_Student_Id","ES 1.1 ","ES 1.2","ES 2.1","ES 2.2","ES 3.1","ES 3.2","ES 3.3","ES 3.4",
+				 			"ES 3.5","ES 4.1","ES 4.2","ES 5.1","ES 5.2","ES 5.3","ES 6.1","ES 6.2","TOTAL");
+		 //final_grades1.show();
+		 
+		 
+		 Dataset<Row> final_grades2 = spark.read().format("com.databricks.spark.csv").option("inferSchema", true).option("useHeader", true).option("dataAddress","'Exam (Second time)'!A1:R63").load("/user/bigdata/saurabh/Data/final_grades2.csv");
+		 final_grades2 = final_grades2.toDF("Final_Student_Id","ES 1.1 ","ES 1.2","ES 2.1","ES 2.2","ES 3.1","ES 3.2","ES 3.3","ES 3.4",
+		 			"ES 3.5","ES 4.1","ES 4.2","ES 5.1","ES 5.2","ES 5.3","ES 6.1","ES 6.2","TOTAL");
+		// final_grades2.show();
+		 
+		
+		 Dataset<Row> Int_Grades = spark.read().format("com.databricks.spark.csv").option("useHeader", true).option("inferSchema", true).load("/user/bigdata/saurabh/Data/Intermediate_grades.csv");
+		 Int_Grades =Int_Grades.toDF("Std_Id","Session_2","Session_3","Session_4","Session_5","Session_6");
+		 Int_Grades = Int_Grades.withColumn("int_grades", functions.array("Std_Id","Session_2","Session_3","Session_4","Session_5","Session_6"));
+		 Int_Grades = Int_Grades.select("Std_Id","int_grades");
+
+		// Int_Grades.show(200);
+		
+		  Dataset<Row> final_grades = final_grades1.unionAll(final_grades2);
+		//  final_grades = final_grades.select("Final_Student_Id")
+
+		  final_grades =final_grades.groupBy("Final_Student_Id").agg(functions.collect_list(struct(col("*"))).alias("FinalGrades"));
+
+		// final_grades.show();
+		
+		  Dataset<Row> df1 = df.join(Int_Grades, functions.col("student_Id").equalTo(functions.col("Std_Id")),"left");
+		  Dataset<Row> joined_df = df1.join(final_grades,functions.col("student_id").cast(DataTypes.IntegerType).equalTo(functions.col("Final_Student_Id")),"left");
+
+		  // df1.show();
+		
+	Dataset<Row>Joined_df =joined_df.select(functions.col("student_Id").cast(DataTypes.IntegerType),
+			functions.col("Sessiondata"), functions.col("Int_Grades"),functions.col("FinalGrades"));
+//	Joined_df.show(115);
+	Joined_df.printSchema();
+//	JavaRDD<Row> joinRDD = Joined_df.toJavaRDD();
+//	joinRDD.foreach(row -> System.out.println(row));
+	
+	
+	//System.out.println(joined_df.select("student_Id").count());
+	
+	JavaRDD<Row> Joined_df_RDD = Joined_df.toJavaRDD();
+	JavaRDD<Student> NewRdd = Joined_df_RDD.map(Row-> {
+		
+		int studentID = Row.getAs("student_Id");
+		ArrayList<Sessions> sessionList = new ArrayList<>();
+		ArrayList<IntermediateGrades> intGradeList = new ArrayList<>();
+		ArrayList<FinalGrades> finalGradeList = new ArrayList<>();
+		
+		ofRef sessionlist = ((scala.collection.mutable.WrappedArray.ofRef)(Row.getAs("Sessiondata")));
+		Iterator itr = sessionlist.iterator();
+	 while(itr.hasNext()) {
+		 Sessions session = new Sessions();
+		 GenericRowWithSchema innerlist = (GenericRowWithSchema) itr.next();
+		 
+		 session.setSession((int)innerlist.get(0));
+		 session.setExercise((String)innerlist.get(2));
+		 session.setActivity((String)innerlist.get(3));
+		 session.setStart_time((String)innerlist.get(4));
+		 session.setEnd_time((String)innerlist.get(5));
+		 session.setIdle_time((double)innerlist.get(6));
+		 session.setMouse_wheel((double)innerlist.get(7));
+		 session.setMouse_wheel_click((double)innerlist.get(8));
+		 
+		 session.setMouse_click_left((double)innerlist.get(9));
+		 session.setMouse_click_right((double)innerlist.get(10));
+		 session.setMouse_movement((double)innerlist.get(11));
+		 session.setKeystroke((double)innerlist.get(12));
+		 
+		 sessionList.add(session);
+		}
+	
+		ofRef intGradesOuter = ((scala.collection.mutable.WrappedArray.ofRef)Row.getAs("Int_Grades"));
+//		Iterator intGradesItr = intGradesOuter.iterator();
+		
+//		while(intGradesItr.hasNext()) {
+			IntermediateGrades intGrades =  new IntermediateGrades();
+			
+			intGrades.setSession_2((String)intGradesOuter.apply(1));
+			intGrades.setSession_3((String)intGradesOuter.apply(2));
+			intGrades.setSession_4((String)intGradesOuter.apply(3));
+			intGrades.setSession_5((String)intGradesOuter.apply(4));
+			intGrades.setSession_6((String)intGradesOuter.apply(5));
+			
+			intGradeList.add(intGrades);
+			
+//		}
+		
+		ofRef finalGradesOuter = ((scala.collection.mutable.WrappedArray.ofRef)Row.getAs("FinalGrades"));
+	//	int lengthOfList = finalGradesOuter.length();
+		
+		if(finalGradesOuter != null) {
+			Iterator finalGradesOuterList = finalGradesOuter.iterator();
+		//	int lengthOfList = finalGradesOuterList.length();
+			while (finalGradesOuterList.hasNext()) {
+				if (finalGradesOuterList.isEmpty()) {
+					continue;	
+				}
+				else {
+					FinalGrades finalGrade = new FinalGrades();
+					GenericRowWithSchema innerFianalGradesItr = ((GenericRowWithSchema)finalGradesOuterList.next());
+					
+					finalGrade.setES_1_1(innerFianalGradesItr.getDouble(1));
+					finalGrade.setES_1_2(innerFianalGradesItr.getDouble(2));
+					finalGrade.setES_2_1(innerFianalGradesItr.getDouble(3));
+					finalGrade.setES_2_2(innerFianalGradesItr.getDouble(4));
+					finalGrade.setES_3_1(innerFianalGradesItr.getDouble(5));
+					finalGrade.setES_3_2(innerFianalGradesItr.getDouble(6));
+					finalGrade.setES_3_3(innerFianalGradesItr.getDouble(7));
+					finalGrade.setES_3_4(innerFianalGradesItr.getDouble(8));
+					finalGrade.setES_3_5(innerFianalGradesItr.getDouble(9));
+					finalGrade.setES_4_1(innerFianalGradesItr.getDouble(10));
+					finalGrade.setES_4_2(innerFianalGradesItr.getDouble(11));
+					finalGrade.setES_5_1(innerFianalGradesItr.getDouble(12));
+					finalGrade.setES_5_2(innerFianalGradesItr.getDouble(13));
+					finalGrade.setES_5_3(innerFianalGradesItr.getDouble(14));
+					finalGrade.setES_6_1(innerFianalGradesItr.getDouble(15));
+					finalGrade.setES_6_2(innerFianalGradesItr.getDouble(16));
+					finalGrade.setTotal(innerFianalGradesItr.getDouble(17));
+					finalGradeList.add(finalGrade);
+			} 
+			}
+		}
+			Student student = new Student(studentID,sessionList,intGradeList, finalGradeList);
+			return student;
+	});
+	
+	//NewRdd.foreach(Row->System.out.println(Row));  
+	
+	//creating hbase connection and setup
+	Configuration conf = HBaseConfiguration.create();
+//	conf.set("hbse.zookeeper.quorum","master.ellicium.com,node1.ellicium.com,node2.ellicium.com");
+//	conf.setInt("hbase.zookeeper.property.clientport",2181);
+	
+	Connection connection = ConnectionFactory.createConnection(conf);
+	Admin admin = connection.getAdmin();
+	
+	System.out.println("Connection done");
+	
+	//create table descriptor
+	HTableDescriptor tableDescriptor = new HTableDescriptor(TableName.valueOf("myTable"));
+	tableDescriptor.addFamily(new HColumnDescriptor("Colfam1") );
+	
+	admin.createTable(tableDescriptor);
+	System.out.println("Table and Column Family Created");
+	
+	//get Table
+	Table table = connection.getTable(tableDescriptor.getTableName());
+	
+	//Iterating through all the rows of DataFrame
+	List<Row> dataframe = Joined_df.collectAsList();
+	for(Row row :dataframe) {
+		Put put = new Put(Bytes.toBytes(row.get(0).toString()));
+		
+		
+	if(row.isNullAt(3)) {
+		put.addColumn(Bytes.toBytes("Colfam1"), Bytes.toBytes("Session"), Bytes.toBytes(row.getList(1).toString()));
+		put.addColumn(Bytes.toBytes("Colfam1"), Bytes.toBytes("Intermediategrades"), Bytes.toBytes(row.getList(2).toString()));
+        table.put(put);
+     
+	}
+	else {
+		put.addColumn(Bytes.toBytes("Colfam1"), Bytes.toBytes("Session"), Bytes.toBytes(row.getList(1).toString()));
+		put.addColumn(Bytes.toBytes("Colfam1"), Bytes.toBytes("Intermediategrades"), Bytes.toBytes(row.getList(2).toString()));
+		put.addColumn(Bytes.toBytes("Colfam1"), Bytes.toBytes("Finalgrades"), Bytes.toBytes(row.getList(3).toString()));
+		table.put(put);
+	}
+	}
+	System.out.println("Data Inserted");
+	
+	table.close();
+	spark.close();
+	 }
+	
+	
+	
+}
