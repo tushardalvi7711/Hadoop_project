@@ -1,0 +1,71 @@
+package hadoopproject;
+
+public class IntermediateGrades {
+	private String Session_2;
+	private String Session_3;
+	private String Session_4;
+	private String Session_5;
+	private String Session_6;
+	
+	public IntermediateGrades(String Session_2,String Session_3,
+			String Session_4,String Session_5,String Session_6) {
+		
+		this.Session_2 = Session_2;
+		this.Session_3 = Session_3;
+		this.Session_4 = Session_4;
+		this.Session_5 = Session_5;
+		this.Session_6 = Session_6;
+	}
+
+	public IntermediateGrades() {
+	}
+	
+	
+	@Override
+	public String toString() {
+		return "[" + Session_2 + " " + Session_3 +" "+ Session_4 + " "+Session_5 + " "+ Session_6 + " "+"]";
+	}
+
+	public String getSession_2() {
+		return Session_2;
+	}
+
+	public void setSession_2(String session_2) {
+		Session_2 = session_2;
+	}
+
+	public String getSession_3() {
+		return Session_3;
+	}
+
+	public void setSession_3(String session_3) {
+		Session_3 = session_3;
+	}
+
+	public String getSession_4() {
+		return Session_4;
+	}
+
+	public void setSession_4(String session_4) {
+		Session_4 = session_4;
+	}
+
+	public String getSession_5() {
+		return Session_5;
+	}
+
+	public void setSession_5(String session_5) {
+		Session_5 = session_5;
+	}
+
+	public String getSession_6() {
+		return Session_6;
+	}
+
+	public void setSession_6(String session_6) {
+		Session_6 = session_6;
+	}
+	
+	
+
+}
