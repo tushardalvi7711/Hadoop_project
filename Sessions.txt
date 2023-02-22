@@ -1,0 +1,159 @@
+package hadoopproject;
+
+public class Sessions {
+	private int session;
+	private String exercise;
+	private String activity;
+	private String start_time;
+	private String end_time;
+	private double idle_time;
+	private double mouse_wheel;
+	private double mouse_wheel_click;
+	private double mouse_click_left;
+	private double mouse_click_right;
+	private double mouse_movement; 
+	private double keystroke;
+	 
+	public Sessions(int session, String exercise, String activity, String start_time, String end_time,
+			double idle_time, double mouse_wheel, double mouse_wheel_click, double mouse_click_left, double mouse_click_right,
+			double mouse_movement, double keystroke) {
+		
+		this.session = session;
+		this.exercise = exercise;
+		this.activity = activity;
+		this.start_time = start_time;
+		this.end_time = end_time;
+		this.idle_time = idle_time;
+		this.mouse_wheel = mouse_wheel;
+		this.mouse_wheel_click = mouse_wheel_click;
+		this.mouse_click_left = mouse_click_left;
+		this.mouse_click_right = mouse_click_right;
+		this.mouse_movement = mouse_movement;
+		this.keystroke = keystroke;
+	}
+
+	
+
+	@Override
+	public String toString() {
+		return "[" + session +" "+ exercise +" "+ activity+" " +start_time+ " "+ end_time +" " + idle_time +" "  + mouse_wheel
+				+ " " + mouse_wheel_click +" "+mouse_click_left+" " +
+				mouse_click_right +" "+ mouse_movement +" "+ keystroke +" " +"]";
+	}
+
+
+
+	public Sessions() {
+		// TODO Auto-generated constructor stub
+	}
+
+
+
+	public int getSession() {
+		return session;
+	}
+
+	public void setSession(int session) {
+		this.session = session;
+	}
+
+	public String getExercise() {
+		return exercise;
+	}
+
+
+	public void setExercise(String exercise) {
+		this.exercise = exercise;
+	}
+
+	public String getActivity() {
+		return activity;
+	}
+
+	public void setActivity(String activity) {
+		this.activity = activity;
+	}
+
+	public String getStart_time() {
+		return start_time;
+	}
+
+
+	public void setStart_time(String start_time) {
+		this.start_time = start_time;
+	}
+
+
+	public String getEnd_time() {
+		return end_time;
+	}
+
+	public void setEnd_time(String end_time) {
+		this.end_time = end_time;
+	}
+
+	public double getIdle_time() {
+		return idle_time;
+	}
+
+
+	public void setIdle_time(double idle_time) {
+		this.idle_time = idle_time;
+	}
+
+
+	public double getMouse_wheel() {
+		return mouse_wheel;
+	}
+
+	public void setMouse_wheel(double mouse_wheel) {
+		this.mouse_wheel = mouse_wheel;
+	}
+
+
+	public double getMouse_wheel_click() {
+		return mouse_wheel_click;
+	}
+
+
+	public void setMouse_wheel_click(double mouse_wheel_click) {
+		this.mouse_wheel_click = mouse_wheel_click;
+	}
+
+	public double getMouse_click_left() {
+		return mouse_click_left;
+	}
+
+	public void setMouse_click_left(double mouse_click_left) {
+		this.mouse_click_left = mouse_click_left;
+	}
+
+	public double getMouse_click_right() {
+		return mouse_click_right;
+	}
+
+	public void setMouse_click_right(double mouse_click_right) {
+		this.mouse_click_right = mouse_click_right;
+	}
+
+
+	public double getMouse_movement() {
+		return mouse_movement;
+	}
+
+
+	public void setMouse_movement(double mouse_movement) {
+		this.mouse_movement = mouse_movement;
+	}
+
+	public double getKeystroke() {
+		return keystroke;
+	}
+
+	public void setKeystroke(double keystroke) {
+		this.keystroke = keystroke;
+	}
+
+	
+}
+
